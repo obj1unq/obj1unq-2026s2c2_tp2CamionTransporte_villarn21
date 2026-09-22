@@ -14,14 +14,20 @@ object arena{
 }	
 object auto {
   method peligrosidad(){return 15}
+  method proximoModo(){
+	return robot
+  }
 }
 object robot {
   method peligrosidad(){return 30}
+  method proximoModo(){
+	return auto
+  }
 }
 object bumblebee{
 	var modo = auto
 	method sufrirAccidente(){self.cambioDeEstado()}
-	method cambioDeEstado(){if(modo == auto){modo = robot}else{modo = auto}}
+	method cambioDeEstado(){modo.proximoModo()}
 	method bulto(){return 2}
 	method peso(){return 800}
 	method nivelPeligrosidad() {return modo.peligrosidad()}

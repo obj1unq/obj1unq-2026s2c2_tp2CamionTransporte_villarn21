@@ -1,25 +1,22 @@
 import cosas.*
 object almacen {
   var elementos = #{}
-  var transporte = camion
-  method descargarElementos(){elementos.addAll(transporte.cosas())}
+  method descargarElementos(transporte){elementos.addAll(transporte.cosas())}
   method cargar(elemento){elementos.add(elemento)}
   method elementos(){return elementos}
 }
 object ruta9{
-  var vehiculo = camion
   var peligrosidadMaxima = 20
-  method validarTranporte(){
-	if(not vehiculo.puedeCircular(peligrosidadMaxima)){
+  method puedeTransitar(vehiculo){
+	if(vehiculo.puedeCircular(peligrosidadMaxima)){
 		self.error("No puede circular")
 	}
   }
 }
 object caminoVecinal{
 	var pesoPermitido = 0
-	var vehiculo = camion
-	method validarTranporte(){
-		if(vehiculo.pesoTotal() > pesoPermitido){
+	method puedeTransita(vehiculo){
+		if(vehiculo.pesoTotal() <= pesoPermitido){
 			self.error("Exceso de peso")
 		}
 	}
@@ -27,6 +24,8 @@ object caminoVecinal{
 }
 object camion {
 	const property cosas = #{}
+	const tara = 1000
+	const pesoMaximo = 2500
 	method transportar(destino, camino){
 		camino.validarTranporte()
 		destino.descargarElementos()
@@ -52,9 +51,9 @@ object camion {
 		return cosas.filter({cosa => self.nivelPeligrosidadDe(cosa) == peligro})
 		}
 	method nivelPeligrosidadDe(cosa){return cosa.nivelPeligrosidad()}
-	method estaExcedidoEnPeso(){return self.pesoTotal() > 2500}
+	method estaExcedidoEnPeso(){return self.pesoTotal() > pesoMaximo}
 	method pesoTotal(){
-		return cosas.sum({cosa => self.pesoDeCosa(cosa)}) + 1000}
+		return cosas.sum({cosa => self.pesoDeCosa(cosa)}) + tara}
 	method algoPesa(kg){
 		return cosas.any({cosa => self.pesoDeCosa(cosa) == kg})}
 	method esPesoPar(){
@@ -62,9 +61,23 @@ object camion {
 	method pesoDeCosa(cosa){return cosa.peso()}
 	method cosasCargadas(){return cosas}
 	method cargar(unaCosa){
-		if(not cosas.contains(unaCosa)){cosas.add(unaCosa)}}
+		self.validarCarga(unaCosa)
+		cosas.add(unaCosa)
+	}
 	method descargar(unaCosa){
-		if(cosas.contains(unaCosa)){cosas.remove(unaCosa)}}
+		self.validarDescarga(unaCosa)
+		cosas.remove(unaCosa)
+	}
+	method validarCarga(unaCosa){
+		if(cosas.contains(unaCosa)){
+			self.error("Ya se cuenta con " + unaCosa + " en la coleccion")
+		}
+	}
+	method validarDescarga(unaCosa){
+		if(not cosas.contains(unaCosa)){
+			self.error("No se cuenta con " + unaCosa + " en la coleccion")
+		}
+	}
 }
 /*Describir los polimorfismos asociados a las colecciones:
 
@@ -73,7 +86,7 @@ object camion {
 3)¿Qué objetos son los emisores de los mensajes polimórficos?
 */
 /*
-1)cosa
+1)cosa y modo
 2)sufrirAccidente, bulto, peso, nivelPeligrosidad
 3)camion 
 */
