@@ -8,15 +8,15 @@ object almacen {
 object ruta9{
   var peligrosidadMaxima = 20
   method puedeTransitar(vehiculo){
-	if(vehiculo.puedeCircular(peligrosidadMaxima)){
+	if(not vehiculo.puedeCircular(peligrosidadMaxima)){
 		self.error("No puede circular")
 	}
   }
 }
 object caminoVecinal{
 	var pesoPermitido = 0
-	method puedeTransita(vehiculo){
-		if(vehiculo.pesoTotal() <= pesoPermitido){
+	method puedeTransitar(vehiculo){
+		if(vehiculo.pesoTotal() > pesoPermitido){
 			self.error("Exceso de peso")
 		}
 	}
@@ -27,8 +27,8 @@ object camion {
 	const tara = 1000
 	const pesoMaximo = 2500
 	method transportar(destino, camino){
-		camino.validarTranporte()
-		destino.descargarElementos()
+		camino.puedeTransitar(self)
+		destino.descargarElementos(self)
 		cosas.clear()
 		}
 	method accidente(){cosas.forEach({cosa => cosa.sufrirAccidente()})}

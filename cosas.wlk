@@ -14,20 +14,16 @@ object arena{
 }	
 object auto {
   method peligrosidad(){return 15}
-  method proximoModo(){
-	return robot
-  }
+  method proximoModo()= robot
 }
 object robot {
   method peligrosidad(){return 30}
-  method proximoModo(){
-	return auto
-  }
+  method proximoModo()= auto
 }
 object bumblebee{
 	var modo = auto
 	method sufrirAccidente(){self.cambioDeEstado()}
-	method cambioDeEstado(){modo.proximoModo()}
+	method cambioDeEstado(){modo = modo.proximoModo()}
 	method bulto(){return 2}
 	method peso(){return 800}
 	method nivelPeligrosidad() {return modo.peligrosidad()}
@@ -76,10 +72,10 @@ object contenedor {
 }
 
 object embalaje {
-  var elemento = null
+  var elemento = arena
   method sufrirAccidente(){}
   method bulto(){return 2}
   method nivelPeligrosidad(){return elemento.nivelPeligrosidad() / 2}
   method peso(){return elemento.peso()}
-  method cargar(_elemento){elemento.add(_elemento)}
+  method cargar(_elemento){elemento = _elemento}
 }
